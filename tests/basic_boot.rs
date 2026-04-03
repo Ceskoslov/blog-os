@@ -4,20 +4,18 @@
 #![test_runner(blog_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
+use blog_os::println;
 use core::panic::PanicInfo;
 
-#[unsafe(no_mangle)]
+#[unsafe(no_mangle)] // don't mangle the name of this function
 pub extern "C" fn _start() -> ! {
     test_main();
+
     loop {}
 }
 
-fn test_runner(tests: &[&dyn Fn()]) {
-    unimplemented!();
-}
-
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(info: &PanicInfo) -> ! {
     blog_os::test_panic_handler(info)
 }
 

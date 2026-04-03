@@ -4,10 +4,8 @@
 #![test_runner(blog_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-mod vga_buffer;
-mod serial;
-
 use core::panic::PanicInfo;
+use blog_os::println;
 
 // static HELLO: &[u8] = b"Hello World!";
 
