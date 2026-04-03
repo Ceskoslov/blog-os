@@ -1,8 +1,11 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(crate::test_runner)]
+#![test_runner(blog_os::test_runner)]
+#![reexport_test_harness_main = "test_main"]
+
 mod vga_buffer;
+mod serial;
 
 use core::panic::PanicInfo;
 
@@ -18,20 +21,22 @@ pub extern "C" fn _start() -> ! {
     println!("hello {}!", "world");
     // panic!("Some panic message");
 
+    #[cfg(test)]
+    test_main();
+
     loop {}
 }
 
 /// 这个函数将在 panic 时被调用
+#[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    print!("PANIC: {}\n", info);
+    println!("PANIC: {}\n", info);
     loop {}
 }
 
 #[cfg(test)]
-pub fn test_runner(tests: &[&dyn Fn()]) {
-    println!("Running {} tests", tests.len());
-    for test in tests {
-        test();
-    }
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    blog_os::test_panic_handler(info)
 }
