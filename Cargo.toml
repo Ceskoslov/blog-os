@@ -16,7 +16,7 @@ panic = "abort"
 
 [[bin]]
 name = "blog-os"
-test = false
+test = true
 bench = false
 
 [dependencies.lazy_static]
