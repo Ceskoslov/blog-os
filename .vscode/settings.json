@@ -1,10 +1,12 @@
 {
-  "rust-analyzer.rustup.toolchain": "nightly",
+  "rust-analyzer.server.extraEnv": {
+    "RUSTUP_TOOLCHAIN": "nightly"
+  },
   "rust-analyzer.cargo.extraArgs": [
     "-Zjson-target-spec"
   ],
   "rust-analyzer.check.extraArgs": [
     "-Zjson-target-spec"
   ],
-  "rust-analyzer.cargo.target": "x86_64-blog-os.json"
+  "rust-analyzer.check.allTargets": false
 }
