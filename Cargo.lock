@@ -5,3 +5,12 @@ version = 4
 [[package]]
 name = "blog-os"
 version = "0.1.0"
+dependencies = [
+ "bootloader",
+]
+
+[[package]]
+name = "bootloader"
+version = "0.9.34"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "13f6a8a495d2f93fe3d6eb3a224f9aa749a63cfd746ed03eb5ddcbd00ade7d8f"
