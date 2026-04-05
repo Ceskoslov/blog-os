@@ -45,6 +45,22 @@ test-args = [
 test-success-exit-code = 33
 test-timeout = 30
 
+# 集成测试配置
+# harness = true: 使用自定义测试框架（test_runner），需要在代码中定义 test_main
+# harness = false: 禁用测试框架，test_main 必须手动调用或由 bootloader 处理
+
+[[test]]
+name = "basic_boot"
+harness = true
+
+[[test]]
+name = "heap_allocation"
+harness = true
+
+[[test]]
+name = "should_panic"
+harness = false
+
 [[test]]
 name = "stack_overflow"
 harness = false
