@@ -5,9 +5,11 @@
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
-use blog_os::println;
+use blog_os::{allocator::HEAP_SIZE, println};
 use bootloader::{BootInfo, entry_point};
 use x86_64::structures::paging::PageTable;
+extern crate alloc;
+use alloc::{boxed::Box, vec, vec::Vec, rc::Rc};
 
 entry_point!(kernel_main);
 
@@ -15,6 +17,7 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     use blog_os::memory;
     use x86_64::{VirtAddr, structures::paging::Page};
     use blog_os::memory::BootInfoFrameAllocator;
+    use blog_os::allocator;
 
     println!("Hello World{}", "!");
     blog_os::init();
@@ -23,13 +26,24 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     let mut mapper = unsafe { memory::init(phys_mem_offset) };
     let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
 
-    // 映射未使用的页
-    let page = Page::containing_address(VirtAddr::new(0xdeadbeaf000));
-    memory::create_example_mapping(page, &mut mapper, &mut frame_allocator);
+    allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
+    let heap_value = Box::new(42);
+    println!("heap_value at {:p}", heap_value);
 
-    // 通过新的映射将字符串 `New!`  写到屏幕上。
-    let page_ptr: *mut u64 = page.start_address().as_mut_ptr();
-    unsafe { page_ptr.offset(400).write_volatile(0x_f021_f077_f065_f04e)};
+    // 创建动态大小向量
+    let mut vec = Vec::new();
+    for i in 0..500 {
+        vec.push(i);
+    }
+    println!("vec at {:p}", vec.as_slice());
+
+    // 创建引用计数向量，计数为 0 时释放
+    let reference_counted = Rc::new(vec![1, 2, 3]);
+    let cloned_reference = reference_counted.clone();
+    println!("current reference count is {}",Rc::strong_count(&cloned_reference));
+    core::mem::drop(reference_counted);
+    println!("reference count is {} now", Rc::strong_count(&cloned_reference));
+
     #[cfg(test)]
     test_main();
 
