@@ -12,22 +12,13 @@ use blog_os::println;
 /// 这个函数将作为程序的入口点,并且永远不会返回，禁用名称重整
 #[unsafe(no_mangle)]
 pub extern "C" fn _start() -> ! {
-    // use core::fmt::Write;
-    // vga_buffer::WRITER.lock().write_str("Hello again").unwrap();
-    // write!(vga_buffer::WRITER.lock(), ", some numbers: {} {}", 42, 1.337).unwrap();
-
     println!("hello {}!", "world");
-    // panic!("Some panic message");
     blog_os::init();
 
-    // println!("\n现在触发栈溢出...");
+    use x86_64::registers::control::Cr3;
 
-    // fn stack_overflow() {
-    //         stack_overflow(); // 每一次递归都会将返回地址入栈
-    //     }
-
-    //     // 触发 stack overflow
-    // stack_overflow();
+    let (level_4_page_table, _) = Cr3::read();
+    println!("Level 4 page table at: {:?}", level_4_page_table.start_address());
 
     #[cfg(test)]
     test_main();
