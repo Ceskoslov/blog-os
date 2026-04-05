@@ -20,25 +20,20 @@ pub extern "C" fn _start() -> ! {
     // panic!("Some panic message");
     blog_os::init();
 
-    // x86_64::instructions::interrupts::int3();
-    // // trigger a page fault
-        // unsafe {
-        //     *(0xdeadbeef as *mut u8) = 42;
-        // };
+    // println!("\n现在触发栈溢出...");
 
-    fn stack_overflow() {
-            stack_overflow(); // 每一次递归都会将返回地址入栈
-        }
+    // fn stack_overflow() {
+    //         stack_overflow(); // 每一次递归都会将返回地址入栈
+    //     }
 
-        // 触发 stack overflow
-    stack_overflow();
+    //     // 触发 stack overflow
+    // stack_overflow();
 
     #[cfg(test)]
     test_main();
 
     println!("It did not crash!");
-
-    loop {}
+    blog_os::hlt_loop();
 }
 
 /// 这个函数将在 panic 时被调用
@@ -46,7 +41,7 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("PANIC: {}\n", info);
-    loop {}
+    blog_os::hlt_loop();
 }
 
 #[cfg(test)]
