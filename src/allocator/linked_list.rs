@@ -76,7 +76,7 @@ impl LinkedListAllocator {
 
     /// 将给定的内存区域添加到链表前端。
     unsafe fn add_free_region(&mut self, addr: usize, size: usize) {
-        /// 确保给定的内存区域足以存储 ListNode
+        // 确保给定的内存区域足以存储 ListNode
         assert_eq!(align_up(addr, mem::align_of::<ListNode>()), addr);
         assert!(size >= mem::size_of::<ListNode>());
 
